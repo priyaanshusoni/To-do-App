@@ -13,6 +13,7 @@ function movetoSignIn(){
   document.getElementById("signup-container").style.display="none";
   document.getElementById("signin-container").style.display="block";
   document.getElementById("todos-container").style.display="none";
+  // alert("moved to sign in")
 
 
 }
@@ -26,6 +27,7 @@ function showTodoApp(){
 // function to handle my user signup 
 
 async function signup(){
+  // alert("clicked on signup")
 const username = document.getElementById("signup-username").value;
 const password = document.getElementById("signup-password").value;
 
@@ -36,7 +38,8 @@ try{
   });
 
 
-// alert(response.data.message);
+   alert(response.data.message);
+  // alert("failed to signup");
 
  if(response.data.message==="You've Succesfully signed up!"){
   movetoSignIn();
@@ -65,7 +68,7 @@ async function signin(){
   
    if(response.data.token){
       localStorage.setItem("token",response.data.token);
-      // alert("You're Signed in")
+      alert("You're Signed in")
       showTodoApp();
    }
 
@@ -76,7 +79,7 @@ async function signin(){
    getTodos();
   
   }catch(error){
-    // alert(error);
+    alert(error);
    console.log("Error while signing in!");
   }
   
@@ -86,7 +89,7 @@ async function signin(){
   async function logout(){
     localStorage.removeItem("token");
 
-    // alert("you are logged out succesfully !");
+    alert("you are logged out succesfully !");
 
     movetoSignIn();
   }
@@ -133,7 +136,7 @@ async function signin(){
     const title = document.getElementById("input").value;
 
     if(title.trim()===""){
-      // alert("Please write something to add to the todo-list , Please for the sake of god please please ");
+      alert("Please write something to add to the todo-list , Please for the sake of god please please ");
       return;
     }
 

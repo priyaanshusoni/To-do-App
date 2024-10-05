@@ -5,57 +5,13 @@ const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const { decode } = require("punycode");
 const jwt_secret = "ilovekiara";
+const cors = require("cors")
+
+let users= [];
+let todos=[];
 
 
 
-
-function readUsers(){
-try{
-    const data = fs.readFileSync("./users.json","utf-8")
-
-    return JSON.parse(data)
-}catch{
- return [];
-}
-
-}
-
-function readTodos(){
-    try{
-        const data = fs.readFileSync("./todos.json","utf-8")
-
-        return JSON.parse(data)
-    }catch{
-        return [];
-       }
-}
-
-function writeUsers(users){
-    try{
-
-        fs.writeFileSync("./users.json" , JSON.stringify(users,null,2) , "utf-8")
- 
-         
- 
-     } catch(e){
-         console.log(e);
-     }
- 
- 
-}
-function writetodos(todos){
-    try{
-
-        fs.writeFileSync("./todos.json" , JSON.stringify(todos,null,2) , "utf-8")
- 
-         
- 
-     } catch(e){
-         console.log(e);
-     }
- 
- 
-}
 
 
 
@@ -74,7 +30,7 @@ app.post("/signup",function(req,res){
       const password = req.body.password;
 
 
-      let users = readUsers();
+    
 
       if(!username || ! password){
         return res.json({
@@ -101,7 +57,7 @@ app.post("/signup",function(req,res){
         password : password,
       })
 
-      writeUsers(users);
+      
 
       res.status(200).json({
         message: "You've Succesfully signed up!"
@@ -115,7 +71,7 @@ app.post("/signin",function(req,res){
     const username = req.body.username;
     const password = req.body.password;
 
-    let users = readUsers();
+   
 
     const token = jwt.sign({
         username : username
@@ -150,7 +106,7 @@ function auth(req,res,next){
         })
     }
    try{
-    let users = readUsers();
+  
 
     const decodedUsername = jwt.verify(token,jwt_secret);
 
@@ -173,7 +129,7 @@ function auth(req,res,next){
 app.get("/todos",auth,function(req,res){
     const currentUser = req.username;
 
-    const todos = readTodos();
+   
 
     const usertodos = todos.filter((x)=>x.username==currentUser);
 
@@ -187,7 +143,7 @@ app.post("/todos/create",auth,function(req,res){
 
 const currentUser = req.username;
 
-let todos = readTodos();
+
 
 const title = req.body.title;
 
@@ -206,7 +162,7 @@ const newTodo = {
 
 todos.push(newTodo);
 
-writetodos(todos);
+console.log(todos);
 
 return res.json({
     message : "Todo Added Succesfully !",
@@ -223,7 +179,7 @@ app.put("/todos/:id",auth,function(req,res){
     const id = req.params.id;
     const currentUser = req.username;
     const title = req.body.title;
-    let todos = readTodos();
+    
     if(!title){
         return res.json({
             message : "Todo Title is Required"
@@ -242,7 +198,7 @@ app.put("/todos/:id",auth,function(req,res){
 
     todo.title=title;
 
-    writetodos(todos)
+   
 
    return res.json({
         message : "Todo Updated Succesfully"
@@ -257,7 +213,7 @@ app.delete("/todos/:id",auth,function(req,res){
 
     const currentUser = req.username;
 
-    let todos = readTodos();
+  
 
     const todoIndex = todos.findIndex((x)=>x.username==currentUser && x.id==parseInt(id));
 
@@ -269,7 +225,7 @@ app.delete("/todos/:id",auth,function(req,res){
 
     todos.splice(todoIndex,1);
 
-    writetodos(todos);
+   
 
     return res.json({
         message : "Todo Deleted Succesfully"
@@ -283,7 +239,6 @@ app.put("/todos/mark/:id",auth,function(req,res){
     const id = req.params.id;
     const currentUser = req.username;
 
-    let todos = readTodos();
 
     let foundTodo = todos.find((u)=>u.username==currentUser && u.id == parseInt(id));
 
@@ -291,7 +246,7 @@ app.put("/todos/mark/:id",auth,function(req,res){
     if(foundTodo){
         foundTodo.done = !foundTodo.done;
 
-        writetodos(todos);
+       
 
         return res.json({
             message : `To-do marked as ${foundTodo.done ? "done" : "undone"}`
